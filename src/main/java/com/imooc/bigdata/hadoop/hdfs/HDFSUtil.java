@@ -1,4 +1,4 @@
-package com.imooc.bigdata;
+package com.imooc.bigdata.hadoop.hdfs;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;

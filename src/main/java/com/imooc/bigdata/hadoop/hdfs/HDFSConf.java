@@ -1,4 +1,4 @@
-package com.imooc.bigdata;
+package com.imooc.bigdata.hadoop.hdfs;
 
 public class HDFSConf {
     private HDFSConf() {

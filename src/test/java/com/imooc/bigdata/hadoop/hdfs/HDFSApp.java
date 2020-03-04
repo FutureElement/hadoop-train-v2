@@ -1,6 +1,5 @@
 package com.imooc.bigdata.hadoop.hdfs;
 
-import com.imooc.bigdata.HDFSUtil;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.BlockLocation;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -75,7 +74,7 @@ public class HDFSApp {
 
     @Test
     public void copyFromLocalFile() throws IOException {
-        final Path src = new Path("/Users/gzhang/workspace/learn/hadoop-train-v2/pom.xml");
+        final Path src = new Path("/Users/gzhang/workspace/learn/hadoop-train-v2/src/main/resources/words.txt");
         final Path dst = new Path("/hdfsapi/test/");
         fileSystem.copyFromLocalFile(src, dst);
     }
@@ -84,12 +83,7 @@ public class HDFSApp {
     public void copyFromLocalBigFile() throws IOException {
         final InputStream in = new BufferedInputStream(new FileInputStream(new File("/Users/gzhang/Downloads/test.zip")));
         final Path dst = new Path("/hdfsapi/test/jdk.tgz");
-        final FSDataOutputStream out = fileSystem.create(dst, new Progressable() {
-            @Override
-            public void progress() {
-                System.out.print(".");
-            }
-        });
+        final FSDataOutputStream out = fileSystem.create(dst, () -> System.out.print("."));
 
         IOUtils.copyBytes(in, out, 1024);
     }
