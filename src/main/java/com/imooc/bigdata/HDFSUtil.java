@@ -9,11 +9,12 @@ public class HDFSUtil {
     private HDFSUtil() {
     }
 
-    public static FileSystem getFileSystem(String hdfsPath, Configuration configuration, String user) {
+    public static FileSystem getFileSystem(Configuration configuration) {
         try {
-            return FileSystem.get(new URI(hdfsPath), configuration, user);
+            return FileSystem.get(new URI(HDFSConf.PATH), configuration, HDFSConf.USER);
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
     }
+
 }
