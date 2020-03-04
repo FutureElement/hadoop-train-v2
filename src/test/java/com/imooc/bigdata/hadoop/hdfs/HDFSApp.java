@@ -10,7 +10,6 @@ import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.RemoteIterator;
 import org.apache.hadoop.io.IOUtils;
-import org.apache.hadoop.util.Progressable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +29,7 @@ public class HDFSApp {
     public void before() {
         final Configuration configuration = new Configuration();
         configuration.set("dfs.replication", "1");
-        fileSystem = HDFSUtil.getFileSystem(configuration);
+        fileSystem = FileSystemFactory.getInstance();
     }
 
     @After

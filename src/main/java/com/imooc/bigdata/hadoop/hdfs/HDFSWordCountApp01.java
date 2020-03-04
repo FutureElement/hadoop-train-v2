@@ -1,7 +1,10 @@
 package com.imooc.bigdata.hadoop.hdfs;
 
 
-import org.apache.hadoop.conf.Configuration;
+import com.imooc.bigdata.hadoop.hdfs.common.Constants;
+import com.imooc.bigdata.hadoop.hdfs.common.PropertiesUtil;
+import com.imooc.bigdata.hadoop.hdfs.context.HDFSContext;
+import com.imooc.bigdata.hadoop.hdfs.mapper.Mapper;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -10,27 +13,26 @@ import org.apache.hadoop.fs.Path;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Properties;
 
 public class HDFSWordCountApp01 {
     public static void main(String[] args) {
-        final Configuration configuration = new Configuration();
-        configuration.set("dfs.replication", "1");
+        final Properties properties = PropertiesUtil.getProperties();
 
+        final Path in = new Path(properties.getProperty(Constants.WC_INPUT));
+        final Path out = new Path(properties.getProperty(Constants.WC_OUTPUT));
         final HDFSContext hdfsContext = new HDFSContext();
-        final Mapper wordCountMapper = new WordCountMapper();
-
-        final Path in = new Path("/hdfsapi/test/words.txt");
-        final Path out = new Path("/hdfsapi/output/result.txt");
-
         try (
-                final FileSystem fs = HDFSUtil.getFileSystem(configuration);
+                final FileSystem fs = FileSystemFactory.getInstance();
                 final FSDataInputStream fsDataInputStream = fs.open(in);
                 final FSDataOutputStream fsDataOutputStream = fs.create(out);
                 final BufferedReader reader = new BufferedReader(new InputStreamReader(fsDataInputStream))
         ) {
+            final Mapper mapper = (Mapper) Class.forName(properties.getProperty(Constants.WC_MAPPER))
+                    .getDeclaredConstructor().newInstance();
             String line;
             while ((line = reader.readLine()) != null) {
-                wordCountMapper.map(line, hdfsContext);
+                mapper.map(line, hdfsContext);
             }
 
             hdfsContext.getContextMap().forEach((k, v) -> {
@@ -40,12 +42,10 @@ public class HDFSWordCountApp01 {
                     throw new IllegalArgumentException(e);
                 }
             });
-
-
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new IllegalArgumentException(e);
+        } finally {
+            hdfsContext.clear();
         }
-
-
     }
 }

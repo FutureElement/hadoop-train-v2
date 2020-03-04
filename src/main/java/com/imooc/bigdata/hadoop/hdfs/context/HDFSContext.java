@@ -1,4 +1,4 @@
-package com.imooc.bigdata.hadoop.hdfs;
+package com.imooc.bigdata.hadoop.hdfs.context;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +17,10 @@ public class HDFSContext {
 
     public Integer get(String key) {
         return contextMap.get(key);
+    }
+
+    public void clear() {
+        contextMap.clear();
     }
 
 }
