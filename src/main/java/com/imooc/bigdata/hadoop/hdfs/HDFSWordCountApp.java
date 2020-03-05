@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
-public class HDFSWordCountApp01 {
+public class HDFSWordCountApp {
     public static void main(String[] args) {
         final Properties properties = PropertiesUtil.getProperties();
 
