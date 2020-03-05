@@ -1,6 +1,7 @@
 package com.imooc.bigdata.hadoop.mr.wc;
 
 import com.imooc.bigdata.hadoop.hdfs.FileSystemFactory;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -23,8 +24,13 @@ public class MapReduceWordCountApp {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
 
+        final FileSystem fileSystem = FileSystemFactory.getInstance();
+        final Path output = new Path("/MapReduce/wc/output");
+        if (fileSystem.exists(output)) {
+            fileSystem.delete(output, true);
+        }
         FileInputFormat.setInputPaths(job, new Path("/MapReduce/wc/input"));
-        FileOutputFormat.setOutputPath(job, new Path("/MapReduce/wc/output"));
+        FileOutputFormat.setOutputPath(job, output);
 
         final boolean completion = job.waitForCompletion(true);
 
