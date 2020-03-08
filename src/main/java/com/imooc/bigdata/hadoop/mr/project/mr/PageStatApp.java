@@ -1,45 +1,20 @@
 package com.imooc.bigdata.hadoop.mr.project.mr;
 
+import com.imooc.bigdata.hadoop.mr.project.StatApp;
 import com.imooc.bigdata.hadoop.mr.project.utils.LogParser;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
 
-public class PageStatApp {
+public class PageStatApp extends StatApp {
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
-        final Path in = new Path("input/raw/trackinfo_20130721.txt");
-        final Path out = new Path("output/v1/pagestat");
-
-        final Configuration configuration = new Configuration();
-        final FileSystem fileSystem = FileSystem.get(configuration);
-        if (fileSystem.exists(out)) {
-            fileSystem.delete(out, true);
-        }
-
-        final Job job = Job.getInstance(configuration);
-        job.setJarByClass(PageStatApp.class);
-
-        job.setMapperClass(MyMapper.class);
-        job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(LongWritable.class);
-
-        job.setReducerClass(MyReducer.class);
-        job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(LongWritable.class);
-
-        FileInputFormat.setInputPaths(job, in);
-        FileOutputFormat.setOutputPath(job, out);
-
-        job.waitForCompletion(true);
+        final PageStatApp pageStatApp = new PageStatApp();
+        pageStatApp.setMapper(MyMapper.class, Text.class, LongWritable.class);
+        pageStatApp.setReducer(MyReducer.class, Text.class, LongWritable.class);
+        pageStatApp.runJob(args);
     }
 
     static class MyMapper extends Mapper<LongWritable, Text, Text, LongWritable> {
