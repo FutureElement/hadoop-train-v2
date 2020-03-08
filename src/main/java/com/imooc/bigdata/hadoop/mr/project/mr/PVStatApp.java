@@ -1,27 +1,20 @@
 package com.imooc.bigdata.hadoop.mr.project.mr;
 
-import com.imooc.bigdata.hadoop.hdfs.FileSystemFactory;
 import com.imooc.bigdata.hadoop.mr.project.StatApp;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
 
 public class PVStatApp extends StatApp {
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
-        final ProvinceStatApp provinceStatApp = new ProvinceStatApp();
-        provinceStatApp.setMapper(ProvinceStatApp.MyMapper.class, Text.class, LongWritable.class);
-        provinceStatApp.setReducer(ProvinceStatApp.MyReducer.class, Text.class, LongWritable.class);
-        provinceStatApp.runJob(args);
+        final PVStatApp statApp = new PVStatApp();
+        statApp.setMapper(MyMapper.class, Text.class, LongWritable.class);
+        statApp.setReducer(MyReducer.class, Text.class, LongWritable.class);
+        statApp.runJob(args);
     }
 
     static class MyMapper extends Mapper<LongWritable, Text, Text, LongWritable> {
