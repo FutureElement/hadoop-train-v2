@@ -1,34 +1,20 @@
 package com.imooc.bigdata.hadoop.mr.project.mrv2.local.mrv2;
 
-import org.apache.hadoop.fs.Path;
+import com.imooc.bigdata.hadoop.mr.project.StatApp;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
 
-public class PVStatV2App {
+public class PVStatV2App extends StatApp {
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
-        final Job job = Job.getInstance();
-        job.setJarByClass(PVStatV2App.class);
-
-        job.setMapperClass(MyMapper.class);
-        job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(LongWritable.class);
-
-        job.setReducerClass(MyReducer.class);
-        job.setOutputKeyClass(NullWritable.class);
-        job.setOutputValueClass(LongWritable.class);
-
-        FileInputFormat.setInputPaths(job, new Path("input/etl"));
-        FileOutputFormat.setOutputPath(job, new Path("output/v2/pvstat"));
-
-        job.waitForCompletion(true);
+        final PVStatV2App statV2App = new PVStatV2App();
+        statV2App.setMapper(MyMapper.class, Text.class, LongWritable.class);
+        statV2App.setReducer(MyReducer.class, Text.class, LongWritable.class);
+        statV2App.runLocalJob(new String[]{"input/etl", "output/v2/pvstat"});
     }
 
     static class MyMapper extends Mapper<LongWritable, Text, Text, LongWritable> {

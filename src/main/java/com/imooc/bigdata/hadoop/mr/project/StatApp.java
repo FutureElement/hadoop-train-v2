@@ -2,7 +2,6 @@ package com.imooc.bigdata.hadoop.mr.project;
 
 import com.imooc.bigdata.hadoop.hdfs.FileSystemFactory;
 import com.imooc.bigdata.hadoop.mr.project.mr.PVStatApp;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.Job;
@@ -22,18 +21,24 @@ public class StatApp {
     private Class<?> outputKeyClass = null;
     private Class<?> outputValueClass = null;
 
+    public void runLocalJob(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
+        runJob(args, true);
+    }
 
     public void runJob(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
+        runJob(args, false);
+    }
+
+    private void runJob(String[] args, boolean locally) throws IOException, ClassNotFoundException, InterruptedException {
         final Path in = new Path(args[0]);
         final Path out = new Path(args[1]);
 
-        final FileSystem fileSystem = FileSystemFactory.getInstance();
+        final FileSystem fileSystem = FileSystemFactory.getInstance(locally);
         if (fileSystem.exists(out)) {
             fileSystem.delete(out, true);
         }
 
-        final Configuration configuration = FileSystemFactory.getConfiguration();
-        final Job job = Job.getInstance(configuration);
+        final Job job = Job.getInstance(fileSystem.getConf());
         job.setJarByClass(PVStatApp.class);
 
         if (mapperClass != null) {
@@ -51,6 +56,7 @@ public class StatApp {
 
         job.waitForCompletion(true);
     }
+
 
     public void setMapper(Class<? extends Mapper<?, ?, ?, ?>> mapperClass, Class<?> outputKeyClass, Class<?> outputValueClass) {
         this.mapperClass = mapperClass;

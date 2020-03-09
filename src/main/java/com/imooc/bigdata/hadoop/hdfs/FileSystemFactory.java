@@ -28,6 +28,14 @@ public class FileSystemFactory {
         }
     }
 
+    public static FileSystem getInstance(boolean locally) {
+        try {
+            return locally ? FileSystem.get(new Configuration()) : FileSystem.get(new URI(getPath()), getConfiguration(), getUser());
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
     public static Configuration getConfiguration() {
         final Configuration configuration = new Configuration();
         configuration.set(Constants.DFS_REPLICATION, properties.getProperty(Constants.DFS_REPLICATION));
