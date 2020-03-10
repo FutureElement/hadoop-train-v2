@@ -2,3 +2,4 @@
 /target/
 *.iml
 /input/raw/
+.DS_Store
